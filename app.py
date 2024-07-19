@@ -102,7 +102,7 @@ async def update_menu(menu_id: int, menu: dict, db: Session = Depends(get_db)):
     update_menu.price = menu['price']
     update_menu.is_published = menu['is_published']
     update_menu.detail = menu['detail']
-    update_menu.ingredients = menu['ingredients']
+    update_menu.ingredient = menu['ingredient']
     db.commit()
     db.refresh(update_menu)
     Response.status_code = 200
