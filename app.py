@@ -32,6 +32,7 @@ app.add_middleware(
 )
 
 # https://fastapi.tiangolo.com/tutorial/sql-databases/#crud-utils
+#---------------------------------Book---------------------------------
 
 @router_v1.get('/books')
 async def get_books(db: Session = Depends(get_db)):
@@ -44,7 +45,7 @@ async def get_book(book_id: int, db: Session = Depends(get_db)):
 @router_v1.post('/books')
 async def create_book(book: dict, response: Response, db: Session = Depends(get_db)):
     # TODO: Add validation
-    newbook = models.Book(title=book['title'], author=book['author'], year=book['year'], is_published=book['is_published'])
+    newbook = models.Book(title=book['title'], author=book['author'], year=book['year'], is_published=book['is_published'], detail=book['detail'], story=book['story'], classification=book['classification'])
     db.add(newbook)
     db.commit()
     db.refresh(newbook)
@@ -58,6 +59,9 @@ async def update_book(book_id: int, book: dict, db: Session = Depends(get_db)):
     update_book.author = book['author']
     update_book.year = book['year']
     update_book.is_published = book['is_published']
+    update_book.detail = book['detail']
+    update_book.story = book['story']
+    update_book.classification = book['classification']
     db.commit()
     db.refresh(update_book)
     Response.status_code = 200
@@ -73,14 +77,68 @@ async def delete_book(book_id: int, response: Response, db: Session = Depends(ge
 
 
 
-# @router_v1.patch('/books/{book_id}')
-# async def update_book(book_id: int, book: dict, db: Session = Depends(get_db)):
-#     pass
+#---------------------------------Menu---------------------------------
+@router_v1.get('/menus')
+async def get_menus(db: Session = Depends(get_db)):
+    return db.query(models.Menu).all()
 
-# @router_v1.delete('/books/{book_id}')
-# async def delete_book(book_id: int, db: Session = Depends(get_db)):
-#     pass
+@router_v1.get('/menus/{menu_id}')
+async def get_menu(menu_id: int, db: Session = Depends(get_db)):
+    return db.query(models.Menu).filter(models.Menu.id == menu_id).first()
 
+@router_v1.post('/menus')
+async def create_menu(menu: dict, response: Response, db: Session = Depends(get_db)):
+    newmenu = models.Menu(name=menu['name'], price=menu['price'], is_published=menu['is_published'], detail=menu['detail'], ingredients=menu['ingredients'])
+    db.add(newmenu)
+    db.commit()
+    db.refresh(newmenu)
+    response.status_code = 201
+    return newmenu
+
+@router_v1.patch('/menus/{menu_id}')
+async def update_menu(menu_id: int, menu: dict, db: Session = Depends(get_db)):
+    update_menu = db.query(models.Menu).filter(models.Menu.id == menu_id).first()
+    update_menu.name = menu['name']
+    update_menu.price = menu['price']
+    update_menu.is_published = menu['is_published']
+    update_menu.detail = menu['detail']
+    update_menu.ingredients = menu['ingredients']
+    db.commit()
+    db.refresh(update_menu)
+    Response.status_code = 200
+    return update_menu
+
+@router_v1.delete('/menus/{menu_id}')
+async def delete_menu(menu_id: int, response: Response, db: Session = Depends(get_db)):
+    menu = db.query(models.Menu).filter(models.Menu.id == menu_id).first()
+    db.delete(menu)
+    db.commit()
+    response.status_code = 204
+    return
+
+@router_v1.post('/orders')
+async def create_order(order: dict, response: Response, db: Session = Depends(get_db)):
+    neworder = models.Order(name=order['name'], price=order['price'], total=order['total'])
+    db.add(neworder)
+    db.commit()
+    db.refresh(neworder)
+    response.status_code = 201
+    return neworder
+
+#---------------------------------Staff----------------------------------
+@router_v1.get('/staffs')
+async def get_orders(db: Session = Depends(get_db)):
+    return db.query(models.Order).all()
+
+@router_v1.delete('/staffs/{order_id}')
+async def delete_order(order_id: int, response: Response, db: Session = Depends(get_db)):
+    order = db.query(models.Order).filter(models.Order.id == order_id).first()
+    db.delete(order)
+    db.commit()
+    response.status_code = 204
+    return
+
+#---------------------------------Student--------------------------------
 @router_v1.get('/students')
 async def get_students(db: Session = Depends(get_db)):
     return db.query(models.Student).all()
