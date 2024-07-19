@@ -130,6 +130,10 @@ async def create_order(order: dict, response: Response, db: Session = Depends(ge
 async def get_orders(db: Session = Depends(get_db)):
     return db.query(models.Order).all()
 
+@router_v1.get('/staffs/{order_id}')
+async def get_order(order_id: int, db: Session = Depends(get_db)):
+    return db.query(models.Order).filter(models.Order.id == order_id).first()
+
 @router_v1.delete('/staffs/{order_id}')
 async def delete_order(order_id: int, response: Response, db: Session = Depends(get_db)):
     order = db.query(models.Order).filter(models.Order.id == order_id).first()
