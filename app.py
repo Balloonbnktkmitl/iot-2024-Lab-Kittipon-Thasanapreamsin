@@ -118,7 +118,7 @@ async def delete_menu(menu_id: int, response: Response, db: Session = Depends(ge
 
 @router_v1.post('/orders')
 async def create_order(order: dict, response: Response, db: Session = Depends(get_db)):
-    neworder = models.Order(name=order['name'], price=order['price'], total=order['total'])
+    neworder = models.Order(name=order['name'], price=order['price'], total=order['total'], note=order['note'])
     db.add(neworder)
     db.commit()
     db.refresh(neworder)

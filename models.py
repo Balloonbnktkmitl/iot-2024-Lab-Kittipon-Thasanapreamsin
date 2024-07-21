@@ -32,6 +32,7 @@ class Order(Base):
     name = Column(String, index=True)
     price = Column(Integer, index=True)
     total = Column(Integer, index=True)
+    note = Column(String, index=True)
     
 class Student(Base):
     __tablename__ = 'students'
